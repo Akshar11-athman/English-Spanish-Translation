@@ -1,0 +1,18 @@
+english-spanish-translation/
+│── README.md          # Project description
+│── requirements.txt   # Python dependencies
+│── .gitignore         # Ignore unnecessary files
+│── LICENSE            # MIT License
+│
+│── notebooks/         # Jupyter/Colab notebooks
+│    └── Deep_learning_project.ipynb
+│
+│── src/               # Python scripts
+│    └── deep_learning_project.py
+│
+│── report/            # LaTeX & final PDF report
+│    └── translation_report.tex
+│    └── translation_report.pdf
+│
+│── images/            # BLEU chart, plots, screenshots
+│    └── Screenshots 
