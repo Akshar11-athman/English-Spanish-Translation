@@ -1,0 +1,124 @@
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
+\lstset{language=Python, basicstyle=\ttfamily\small, breaklines=true}
+
+\title{English-to-Spanish Translation using Deep Learning Models}
+\author{Akshar}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This project implements and compares four neural architectures for English-to-Spanish translation: Recurrent Neural Network (RNN), Long Short-Term Memory (LSTM), Gated Recurrent Unit (GRU), and a pretrained Transformer (BERT/MarianMT). 
+The models were trained on a Kaggle English–Spanish dataset. 
+Evaluation with BLEU scores shows that the BERT-based Transformer significantly outperforms the recurrent models. 
+\end{abstract}
+
+\section{Introduction}
+Machine translation is a vital task in Natural Language Processing (NLP). 
+Traditional recurrent models such as RNN, LSTM, and GRU can learn language patterns, but modern Transformer architectures with pretraining (e.g., BERT) achieve much higher performance. 
+This project evaluates these models on English-to-Spanish translation.
+
+\section{Dataset}
+We used the Kaggle English-to-Spanish dataset containing parallel sentence pairs. 
+A subset of around 20,000 pairs was used for training and testing due to compute limits. 
+Data preprocessing involved cleaning, tokenization, integer encoding, and padding sentences to a fixed length of 20 tokens.
+
+\section{Preprocessing}
+\begin{itemize}
+    \item Tokenization using Keras Tokenizer for RNN, LSTM, GRU.
+    \item Padding to fixed length (20).
+    \item Train/test split (80/20).
+    \item For BERT model, HuggingFace MarianMT tokenizer was used.
+\end{itemize}
+
+\section{Models}
+\subsection{RNN, LSTM, GRU}
+Implemented in Keras using an Embedding layer, recurrent layer (RNN/LSTM/GRU), and Dense output with softmax activation.
+
+\begin{lstlisting}
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding, GRU, Dense
+
+model = Sequential([
+    Embedding(input_dim=20000, output_dim=128, input_length=20),
+    GRU(128, return_sequences=True),
+    Dense(20000, activation="softmax")
+])
+\end{lstlisting}
+
+\subsection{BERT Transformer (MarianMT)}
+We used the pretrained Helsinki-NLP MarianMT model from HuggingFace for English→Spanish translation.
+
+\section{Training}
+\begin{itemize}
+    \item Optimizer: Adam
+    \item Loss: Sparse Categorical Cross-Entropy
+    \item Epochs: 3
+    \item Batch size: 64
+\end{itemize}
+
+\section{Results}
+\subsection{BLEU Scores}
+\begin{table}[h]
+\centering
+\begin{tabular}{lr}
+\toprule
+Model & BLEU Score \\ \midrule
+RNN & 20.56 \\
+LSTM & 17.29 \\
+GRU & 9.29 \\
+BERT (MarianMT) & 41.11 \\
+\bottomrule
+\end{tabular}
+\caption{BLEU score comparison of models.}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{Screenshot_2025-10-04_172826.png}
+\caption{BLEU Scores for Different Translation Models.}
+\end{figure}
+
+\subsection{Example Translations}
+\begin{itemize}
+    \item EN: ``Hello'' $\rightarrow$ ES: ``Hola''
+    \item EN: ``Good morning'' $\rightarrow$ ES: ``Buenos días''
+    \item EN: ``What is your name?'' $\rightarrow$ ES: ``¿Cómo te llamas?''
+    \item EN: ``How are you?'' \\
+          True ES: ``¿Cómo estás?'' \\
+          Predicted ES (GRU): \texttt{...} \\
+          Predicted ES (BERT): ``¿Cómo estás?''
+\end{itemize}
+
+\section{Discussion}
+The results show that:
+\begin{itemize}
+    \item GRU achieved the lowest score (9.29), struggling with translations.
+    \item LSTM performed better (17.29), followed by RNN (20.56).
+    \item The pretrained BERT Transformer dominated with 41.11 BLEU, close to professional-quality translation.
+\end{itemize}
+
+\section{Conclusion and Future Work}
+\begin{itemize}
+    \item Pretrained Transformers (BERT/MarianMT) clearly outperform recurrent models.
+    \item RNN/LSTM/GRU are useful for learning purposes but limited in real-world translation quality.
+    \item Future work: train on larger datasets, apply beam search decoding, use multilingual models like mBART/mT5, and deploy as a translation web app.
+\end{itemize}
+
+\section*{References}
+\begin{itemize}
+    \item Kaggle English–Spanish Dataset.
+    \item HuggingFace MarianMT: \url{https://huggingface.co/Helsinki-NLP/opus-mt-en-es}
+    \item TensorFlow/Keras Documentation.
+    \item SacreBLEU Toolkit.
+\end{itemize}
+
+\end{document}
